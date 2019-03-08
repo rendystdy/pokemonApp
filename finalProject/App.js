@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { createStackNavigator, createAppContainer} from 'react-navigation';
+import { createStackNavigator, createAppContainer, createSwitchNavigator} from 'react-navigation';
 import { Provider } from 'react-redux';
 import store from './src/publics/redux/store';
 
@@ -10,6 +10,7 @@ import Login from './src/screens/Login';
 import Register from './src/screens/Register';
 import CreatePokemon from './src/screens/CreatePokemon';
 import EditPokemon from './src/screens/EditPokemon';
+import SplashScreen from './src/screens/SplashScreen';
 
 export default class App extends Component {
   render() {
@@ -21,9 +22,9 @@ export default class App extends Component {
   }
 }
 
-// const AppSwitch = createSwitchNavigator({
-//   Splash: SplashScreen
-// })
+const AppSwitch = createSwitchNavigator({
+  Splash: SplashScreen
+})
 
 const AppStack = createStackNavigator({
   Home: {
@@ -62,8 +63,14 @@ const AppStack = createStackNavigator({
       header: null
     }
   },
+  Splash: {
+    screen: AppSwitch,
+    navigationOptions: {
+      header: null
+    }
+  },
 }, {
-    initialRouteName: 'Home'
+    initialRouteName: 'Splash'
   })
 
 const AppContainer = createAppContainer(AppStack)

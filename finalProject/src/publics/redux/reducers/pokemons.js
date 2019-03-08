@@ -19,7 +19,7 @@ export default pokemons = (state = initialState, action) => {
             }
 
         case 'GET_POKEMONS_FULFILLED':
-            // console.warn(JSON.stringify(action.payload.data))
+            // console.warn(JSON.stringify(action.payload.data.id))
             return {
                 ...state,
                 isLoading: false,

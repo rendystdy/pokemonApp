@@ -10,7 +10,7 @@ export const getPokemons = () => {
 export const getPokemonDetail = (id) => {
   return {
     type: 'GET_POKEMON_DETAIL',
-    payload: axios.get(`http://192.168.0.23:3333/api/v1/pokemon/${id}`)
+    payload: axios.get(`http://192.168.0.23:3333/api/v1/pokemons/${id}`)
   }
 }
 
@@ -19,7 +19,7 @@ export const createPokemon = (body) => {
     type: 'CREATE_POKEMON',
     payload: axios({
       method: 'post',
-      url: 'http://192.168.0.23:3333/api/v1/pokemon',
+      url: 'http://192.168.0.23:3333/api/v1/pokemons',
       data: body
     })
   }
@@ -28,7 +28,7 @@ export const createPokemon = (body) => {
 export const updatePokemon = (id) => {
   return {
     type: 'UPDATE_POKEMON',
-    payload: axios.patch(`http://192.168.0.23:3333/api/v1/pokemon/${id}`)
+    payload: axios.patch(`http://192.168.0.23:3333/api/v1/pokemons/${id}`)
   }
 }
 
@@ -38,7 +38,7 @@ export const deletePokemon = (id) => {
     type: 'DELETE_POKEMON',
     payload: axios({
       method: 'delete',
-      url: `http://192.168.0.23:3333/api/v1/pokemon/${id}`,
+      url: `http://192.168.0.23:3333/api/v1/pokemons/${id}`,
     })
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, Image, ScrollView, TouchableHighlight } from 'react-native';
-import { Container, List, Fab, ListItem, View, Tab, Tabs, Header, Left, Right, Body, TabHeading, ScrollableTab, Item, Input, Icon, Button, Text, H3 } from 'native-base';
+import { Container, List, Fab, ListItem, View, Tab, Tabs, Header, Left, Right, Body, ScrollableTab, Item, Input, Icon, Button, Text, H3, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { getPokemons, deletePokemon, createPokemon } from '../publics/redux/actions/pokemons';
@@ -28,14 +28,27 @@ class Home extends Component {
 
     renderItem = ({ item, index }) => (
 
-        <ListItem onPress={() => this.props.navigation.navigate('Details', {
+        <ListItem thumbnail onPress={() => this.props.navigation.navigate('Details', {
             id: item.id
         })}>
-            <Image style={{ width: 100, height: 100 }} source={{ uri: item.image_url }} />
-            <View style={{ marginLeft: 10, flex: 1, marginTop: 10 }}>
-                <H3>{item.name}</H3>
-            </View>
-            <TouchableHighlight><Icon name="trash" style={{ color: '#3d3d3d' }} onPress={() => this.handleDelete(item.id)}></Icon></TouchableHighlight>
+            <Left>
+                <Thumbnail source={{ uri: item.image_url }} />
+            </Left>
+            <Body>
+                <Text>{item.name}</Text>
+                <FlatList
+                    data={item.types}
+                    renderItem={({ item }) => (
+                        <Text>{item.name}</Text>
+                    )}
+                    keyExtractor={item => item.id}
+                />
+            </Body>
+            <Right>
+                <Button transparent onPress={() => this.handleDelete(item.id)}>
+                    <Icon name="trash" style={{ color: '#3d3d3d' }} ></Icon>
+                </Button>
+            </Right>
         </ListItem>
     )
 
@@ -43,7 +56,7 @@ class Home extends Component {
 
 
     render() {
-        // alert(JSON.stringify(this.props.pokemons.data))
+        alert(JSON.stringify(this.props.pokemons.data))
         return (
             <Container>
                 <Header style={styles.header} hasTabs>
@@ -68,7 +81,7 @@ class Home extends Component {
                     </Right>
                 </Header>
                 <ScrollView>
-                    <List>
+                    <List style={{ backgroundColor: '#f2f2f2' }}>
                         <FlatList
                             data={this.props.pokemons.data}
                             keyExtractor={this._keyExtractor}
@@ -101,8 +114,8 @@ const styles = StyleSheet.create({
     },
     logo: {
         marginTop: 25,
-        width:30,
-        height:50
+        width: 30,
+        height: 50
     },
     searchBar: {
         width: 270,
