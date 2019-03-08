@@ -10,19 +10,14 @@
 |
 */
 
-const Factory = use('Factory')
-// const Hash = use('Hash')
-const Category = use('App/Models/Category')
-
 /** @type {import('@adonisjs/lucid/src/Factory')} */
-// const Factory = use('Factory')
+const Factory = use('Factory')
 
 class CategorySeeder {
-  async run () {
-    // / menggunakan User model
-    const category = new Category()
-    category.name = 'Duck'
-    await category.save()
+  async run() {
+    await Factory
+      .model('App/Models/Category')
+      .createMany(5)
   }
 }
 

@@ -7,6 +7,7 @@
 /**
  * Resourceful controller for interacting with pokemons
  */
+
 const Pokemon = use('App/Models/Pokemon')
 const Database = use('Database')
 
@@ -21,24 +22,16 @@ class PokemonController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    // await Database
-    //   .table('Pokemon')
-    //   .innerJoin('types', 'user.id', 'accounts.user_id')
+    const pokemon = await Pokemon.query().with('category').with('types').fetch()
 
-    return await Pokemon.all()
-  }
+    return pokemon
+    // const pokemon = await Pokemon.all()
 
-  async details({ params, view, request, response }) {
-    // return await Pokemon.find(params.id)
-      // return await Database
-      //   .table('pokemons')
-      //   .where(params.id)
-      //   .first()
-      const pokemon = await Database.from('pokemons')
-      .where({ id: params.id })
-      .first()
+    // response.status(200).json({
+    //   message: 'Here are your projects.',
+    //   data: pokemon
+    // })
 
-      return pokemon
   }
 
   /**
@@ -51,6 +44,18 @@ class PokemonController {
    * @param {View} ctx.view
    */
   async create({ request, response, view }) {
+    // const { name, image_url, category_id, types_id, latitude, longitude } = request.post()
+
+    // const pokemon = await Pokemon.create({
+    //   name, image_url, category_id, latitude, longitude
+    // })
+
+    // if (types_id) {
+    //   await pokemon.types().attach(types_id)
+    //   pokemon.types = await pokemon.types().fetch()
+    // }
+
+    // return pokemon
   }
 
   /**
@@ -62,12 +67,19 @@ class PokemonController {
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
-    const pokemon = await Pokemon.create((request.all()))
+    const { name, image_url, category_id, types_id, latitude, longitude } = request.post()
 
-    return {
-      status: 'Success',
-      data: pokemon
+    const pokemon = await Pokemon.create({ name, image_url, category_id, latitude, longitude })
+
+    if (types_id && types_id.length > 0) {
+      await pokemon.types().attach(types_id)
+      pokemon.types = await pokemon.types().fetch()
     }
+
+    response.status(201).json({
+      message: 'Successfully created a new pokemon.',
+      data: pokemon
+    })
   }
 
   /**
@@ -80,6 +92,23 @@ class PokemonController {
    * @param {View} ctx.view
    */
   async show({ params, request, response, view }) {
+    // const pokemon = await Pokemon.find(params.id)
+
+    const pokemon = await Pokemon.query().with('category').with('types').where('id', params.id).fetch()
+
+    return pokemon
+
+    // versi ke 2
+    // const { project } = request.post()
+
+    // const tags = await project.tags().fetch()
+
+    // project.tags = tags
+
+    // response.status(200).json({
+    //   message: 'Here is your project.',
+    //   data: pokemon
+    // })
   }
 
   /**
@@ -103,30 +132,30 @@ class PokemonController {
    * @param {Response} ctx.response
    */
   async update({ params, request, response }) {
-    const { id } = params
-    const pokemon = await Pokemon.find(id)
 
-    const { name, image_url, idtypes, idcategory, latitude, longitute } = request.all()
+    // const { name, image_url, category_id, types_id, latitude, longitude } = request.post()
+    const pokemon = await Pokemon.find(params.id)
+
+    const { name, image_url, category_id, latitude, longitude, types_id } = request.all()
 
     pokemon.name = name
     pokemon.image_url = image_url
-    pokemon.idtypes = idtypes
-    pokemon.idcategory = idcategory
+    pokemon.category_id = category_id
     pokemon.latitude = latitude
-    pokemon.longitute = longitute
-
+    pokemon.longitude = longitude
 
     await pokemon.save()
 
-    // const order = await Database
-    // .table('orders')
-    // .where('id', params.id)
-    // .update(request.all())
-
-    return {
-      status: 'Success',
-      data: pokemon
+    if (types_id && types_id.length > 0) {
+      await pokemon.types().detach()
+      await pokemon.types().attach(types_id)
+      pokemon.types = await pokemon.types().fetch()
     }
+
+    response.status(200).json({
+      message: 'Successfully updated this pokemon.',
+      data: pokemon
+    })
   }
 
   /**
@@ -138,14 +167,13 @@ class PokemonController {
    * @param {Response} ctx.response
    */
   async destroy({ params, request, response }) {
-    const pokemon = await Pokemon.find(params.id)
-
+    const pokemon = await Pokemon.findBy('id', params.id)
     pokemon.delete()
-    // return await products.delete()
-    return {
-      status: 'success delete',
-      data: pokemon
-    }
+
+    response.status(200).json({
+      message: 'Successfully deleted this project.',
+      deleted: true
+    })
   }
 }
 

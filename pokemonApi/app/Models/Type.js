@@ -4,9 +4,9 @@
 const Model = use('Model')
 
 class Type extends Model {
-    pokemon () {
-        return this.hasMany('App/Models/Pokemon')
-      }
+   pokemons() {
+      return this.belongsToMany('App/Models/Pokemon')
+   }
 }
 
 module.exports = Type
